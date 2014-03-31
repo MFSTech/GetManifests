@@ -26,6 +26,14 @@ When our customers request that we move product (see also [SendUsShipments](/Sen
 
 That said, the operational reality is that it is still a group, and it's valuable for our suppliers to understand the nature of the group-- to have information about the shipments inside the manifest. Toward that end, our XML format includes both aggregate, manifest-level information and information about each shipment within the manifest. The most important piece of shipment-level information is the shipment identifier (ID). It is also known as the tracking number or BOL number. It's generally the number our customers use to refer to the shipment, and it's the number generally used by suppliers when interacting with shippers and consignees.
 
+Example Files
+-------------
+
+* [Sample Outbound Transmission](ManifestXMLOutbound-Sample.xml) (From Us to You)
+* Sample Response (You Responding to Us)
+ * [Success](ManifestXMLOutbound-Response-Success-Sample.xml)
+ * [Failure](ManifestXMLOutbound-Response-Failure-Sample.xml) 
+
 Transmission Content
 --------------------
 
@@ -193,7 +201,13 @@ A `Piece` represents a piece record in our system. Typically, multiple, like pie
 * `SpecInst` - Special instructions provided by the customer such as "beware of dog".
 * `PkgDesc` - Package description provided by the customer such as "dining room set with table and chairs". 
 
-#### Extra Services
+#### ExtraServices
+
+This element falls under the `Manifest` element. All of the extra services required by the various customer shipment requests are aggregated into a single, unified manifest list of "extra services" such as Deluxing (where the provider removes packaging, inspects contents, and ensures product is pristine for delivery). The `ExtraServices` element has one or more `ExtraService` elements beneath it with the below contents.
+
+* `ExtraServiceTypeID` - A textual identifier for the extra service. (e.g. "Deluxing" for Deluxing)
+* `ExtraServiceTypeName` - A name for the required extra service. 
+* `ExtraServiceTypeDesc` - A description of the required extra service. (e.g. "At Local Delivery Carrier location, remove product from packaging, inspect and process the product so that it is delivered in a pristine condition.")
 
 Response Content
 ----------------
