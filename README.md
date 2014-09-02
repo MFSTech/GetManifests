@@ -103,7 +103,7 @@ The manifest information is hangs off the root inside of `Manifest` and is broke
 Most of these elements are self-explanatory.
 
 * `ManifestOriginType` - This is either "Terminal" or "Address". "Terminal" is only used for MAWB manifests. When the carrier receives the manifest at their origin terminal rather than retrieving it from an address, the "Terminal" origin type is used. Similarly, when the carrier holds the manifest for pickup at their destination terminal, rather than delivering it to an address, the "Terminal" destination type is used.
-* `ManifestOriginCode` - When the `ManifestOriginType` or `ManifestDestType` is "Terminal", this will contain the terminal code (often an airport code such as "MSP").
+* `ManifestOriginCode` - When the `ManifestOriginType` or `ManifestDestType` is "Terminal", this will contain the terminal's code (often an airport code such as "MSP"). When the `ManifestType` is "Pickup" this will be the terminal code for the origin of the adjoining MAWB. When the `ManifestType` is "Delivery", this will be the terminal code for the destination of the adjoining MAWB.
 * `ManifestOriginLocationType` - This is one of an enumerated list of location types.
  * Business
  * Convention
