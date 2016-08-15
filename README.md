@@ -46,7 +46,8 @@ The header elements are grouped into a header element, but rather hang off the r
 * `TransmissionID` - A unique integer for the current transmission. Multiple transmissions of the same manifest information would each have a different transmission ID. The value is unique across all of our transmissions, not just transmissions for a particular supplier. This value is useful for debugging transmission problems.
 * `TransmissionGeneratedUTC` and `TransmissionGeneratedLocal` - The date the transmission was generated in UTC and our time (US Central time zone, where daylight savings is observed).
 * `Authentication` - This section can be populated with a `UserName` and `Password` of your choosing. This could be used by you to authenticate our transmission. Instead of a password, a `PasswordHash` can be sent, which is a dynamically salted MD5 or SHA1 hash of this constructed value:
-	> `UserName` + `|` + `TransmissionID` + `|` + `TransmissionGeneratedUTC` + `|` + `Password`
+
+  > `UserName` + `|` + `TransmissionID` + `|` + `TransmissionGeneratedUTC` + `|` + `Password`
 
 ### Manifest Information
 
