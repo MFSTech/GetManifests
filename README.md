@@ -74,7 +74,7 @@ The manifest information is hangs off the root inside of `Manifest` and is broke
 * `ManifestShipType` - This is the textual ID of the special services to be performed on the side specified in `ManifestSpecialSide`. Examples include "WG" for "White Glove" and "TP" for "Threshold Plus". Additional services required will be listed in the `ExtraServices` element under the `Shipment` element referenced below.
 * `ManifestShipTypeName` - This is the textual name related to the special services ID specified in `ManifestShipType`.
 * `ManifestShipTypeBilling` - Not all suppliers have defined rates for all special services. This billing description text is designed to explain the special services in more standardized terms for which the supplier is more likely to have rates.
-* `ManifestShipTypeDesc` - This is a more lengthy description of the special services to be performed on the side specified in `ManifestSpecialSide`.
+* `ManifestShipTypeDescription` - This is a more lengthy description of the special services to be performed on the side specified in `ManifestSpecialSide`.
 * `ManifestSpecInst` - These are custom instructions from our operations staff to our suppliers.
 
 #### ManifestControlNumbers
