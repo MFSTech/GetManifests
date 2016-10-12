@@ -133,7 +133,7 @@ Most of these elements are self-explanatory. See the analogous origin element ab
 
 * `ManifestDestType`
 * `ManifestDestCode`
-* `ManifestDescLocationType` - Note that this is suppsed to be `ManifestDestLocationType` and [will be adjusted](https://github.com/MFSTech/GetManifests/issues/1).
+* `ManifestDestLocationType`.
 * `ManifestDestName`
 * `ManifestDestContact`
 * `ManifestDestAdd1`
