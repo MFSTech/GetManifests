@@ -59,6 +59,7 @@ The manifest information is hangs off the root inside of `Manifest` and is broke
 * `ManifestOrigin`
 * `ManifestDestination`
 * `ManifestPieceSummary`
+* `ManifestCostEstimates`
 * `Shipments`
 
 #### ManifestInfo
@@ -133,7 +134,7 @@ Most of these elements are self-explanatory. See the analogous origin element ab
 
 * `ManifestDestType`
 * `ManifestDestCode`
-* `ManifestDestLocationType`.
+* `ManifestDestLocationType`
 * `ManifestDestName`
 * `ManifestDestContact`
 * `ManifestDestAdd1`
@@ -154,10 +155,38 @@ Most of these elements are self-explanatory. See the analogous origin element ab
  * While seemingly obvious, it isn't always clear what constitutes a piece. Generally, we view it as a separable, labeled box. Several boxes piled on (but not secured to) a pallet are generally considered separate pieces. However, if they are banded to a pallet and surrounded with black shrink wrap, then the pallet itself is considered a single piece. It's less clear for configurations in between.
  * Usually, this will be the sum of the number of pieces listed in each of our customers' shipments. However, sometimes the freight is reconfigured (e.g. banded to pallets) and shipped as larger, bulk units instead of the individual pieces supplied by the customer. In those cases, the adjusted piece count (known internally as "override pieces") will be displayed here. 
 * `ManifestWeightActual` - This represents the total actual weight of all pieces on the manifest. It is not the "dimensional weight".
+* `ManifestWeightDimensional` - This represents the total "dimensional weight" of all pieces on the manifest. The appearance of this element is configurable and corresponds with the appearance of `PieceLength`, `PieceWidth`, and `PieceHeight` referenced below. The dimensional weight is calculated by totaling the product of the length, width, and height of each piece, divided by the dim factor. The dim factor is supplier-specific, but it is usually 250 for ground shipments.
+* `ManifestWeightChargeable` - This "chargeable weight" represents the greater of the dimensional weight or actual weight of the manifest and it used to calculate those costs of a manifest which are based on weight. However, most Agent suppliers use a pricing scheme based on actual weight and ignore the dimensional and chargeable weights.
+* `ManifestDeclaredValue` - The declared value is intended to represent the total fair market value of the products in the manifest. This element is only present with special authorization and its presence corresponds with the `PieceDecVal` element referenced below. This value is based on information provided by our customers and is usually not verified by us. A value in this element does not constitute a request by us to purchase insurance or special coverage for damages. Those requests would be made by a process established through negotiation with the supplier.
+
+#### ManifestCostEstimates
+
+This section, available upon request, contains information about how we expect to be charged by the supplier for handling this manifest. Our system automatically computes these estimated costs for most suppliers, though our operations staff will make manual adjustments in certain situations. Once we have processed and authorized a supplier's invoice for a manifest, the total costs displayed here will equal the planned payment to the supplier. The difference between our original estimates and the final payment will be represented by a "Vendor Invoice Adjustment" estimated cost. Once the invoice payment has been authorized, the costs are no longer "estimates", but the element name will still contain "Estimates".
+
+* `CostsTotal` - The total amount, in US dollars, of all costs expected to be charged by the supplier for this manifest. This is the sum of the `CostAmount` elements referenced below.
+* `Costs` - A collection of individual expected costs of various types, each of which is contained within a `Cost` element.
+
+##### Cost
+
+* `CostID` - This is the unique identifier of the individual estimated cost record in our system. This number will not change over the life of the estimate cost record. However, an estimated cost might be deleted and replaced with a different cost of the same type.
+* `CostCode`- This is a mixed textual/numeric code which uniquely references the type of cost. Typically, there will not be more than one Cost with the same CostCode on the same manifest. These codes typically will not change.
+* `CostName` - This is the name of the cost type. Most manifests will have a "Freight Charge" (CostCode = "A1") and a "Fuel Surcharge". Manifests with invoices processed for payment will have "Vendor Invoice Adjustment" (CostCode = "S002"). These names are subject to change.
+* `CostMethodID` - This is a code which defines the method used to compute the cost.
+* `CostMethod` - This is the name of the method used to compute the cost. "System" is used primary for two types of costs ("Freight Charge" and "Vendor Invoice Adjustment"). The "System" Method for the "Freight Charge" estimated cost includes a variety of sophisticated computation mechanisms which usually involve the weight of the manifest and the geography involved. "Freight Charge" as a *Method* means that the Value of the charge is derived from the Amount of the "Freight Charge" estimated cost.
+* `CostValue` - This Value is multiplied by the Rate to arrive at the Amount, sometimes after dividing by a factor of 100. For the "Freight Charge" cost type, this Value will often be the chargeable or actual weight of the manifest. For the "Fuel Surcharge" cost type, this Value will often be the Amount of the Freight Charge cost.
+* `CostRate` - This Rate is multiplied by the Value to arrive at the Amount, sometimes after dividing by a factor of 100. For the "Freight Charge" cost type, this Rate will usually be the rate negotiated for a particular geographic and service configuration. For the "Fuel Surcharge" cost type, this Rate will be the negotiated fuel surcharge rate, usually based on an official benchmark fuel price.
+* `CostMin` - If a cost type is subject to a negotiated minimum amount, it will appear here for information purposes, but the Value and Rate will also be adjusted to accommodate this minimum.
+* `CostAmount` - This is the actual amount of the cost of this type we expect to pay. It is usually the product of the Value and Rate, sometimes after dividing by a factor of 100, but its actual value governs over any expected, calculated amount.
 
 #### Shipments
 
-This element contains one or more `Shipment` elements for each of our customers' shipments on the manifest.
+This element contains one or more `Shipment` elements for each of our customers' shipments on the manifest. Each `Shipment` element contains the following elements, which are detailed below.
+
+* `ControlNumbers`
+* `AdjacentManifests`
+* `Pieces`
+* `SpecInst`
+* `PkgDesc`
 
 ##### ControlNumbers
 
@@ -169,17 +198,32 @@ This element contains one or more `Shipment` elements for each of our customers'
 * `SO` - Sales Order Number. This is one of four primary textual control numbers customers are allowed to specify. It is merely informational.
 * `ShipperManifest` - A shipper might place a group of shipments together on a Shipper Manifest. Each shipment will share the same `ShipperManifest` number. This element is only present if authorized.
 
+##### AdjacentManifests
+
+A single customer shipments will usually involve multiple suppliers. Often, we contract at the manifest level for an Agent supplier to pick up a collection of shipments from one of our customer's warehouses (usually termed a "Shipper"). Then that Agent supplier will hand off the shipments in manifest groups to one or more Carrier suppliers (sometimes called line haul providers) who move the grouped shipments across the country, often on what is called a MAWB (Master AirWay Bill). Finally, another Agent supplier in the shipments' destination market will recover the groups of shipments from the Carrier supplier and deliver them locally.
+
+Technically, the group of shipments at origin is different than the groups of shipments for long distance transit, and each of those is different from the groups of shipments at destination. For example, an Agent supplier might pick up 20 shipments on one manifest at a Shipper and drop them off at a Carrier supplier, but we will have configured them as, say, 5 different manifests consisting of 4 shipments. Our system does not have a direct relationship between the origin manifest and the long distance manifests. Instead, each shipment in each manifest has a sequence of manifests to which it belongs.
+
+Therefore, in this transmission, each shipment has its previous and next manifest information listed. In the example above, each of the 20 shipments in the Agent supplier manifest would have no "previous" manifest but would have a "next" manifest of one of the 5 different Carrier manifests. Because most of our shipments are to individual residences, it is rare for Agent suppliers on the delivery side to have multiple shipments in their manifests. Therefore, in the 20-shipment example above, there would likely be 20 separate delivery manifest transmissions to one or more Agent suppliers, each of which would have a single shipment with a "previous" manifest referencing its Carrier manifest control number but listing no "next" manifest.
+
+* `PreviousManifestType` - The textual manifest type of the previous manifest to which the shipment belongs. Typically, for Pickup manifests, the previous manifest type for attached shipments will not be specified. For MAWB manifests, the previous manifest type will often be a PICKUP. For Delivery manifests, the previous manifest will often be a PICKUP or TRANSFER. See also `ManifestType` above.
+* `PreviousManifestID` - The supplier for the transmitted manifest will typically recover or receive the shipments from the previous suppliers, who will reference the shipment based on this textual previous Manifest ID. See also above `ManifestID`.
+* `PreviousManifestTranID` - This is the unique numeric transaction identity for the previous manifest in our system. See also above `ManifestTranID`.
+* `NextManifestType` - The textual manifest type of the next manifest to which the shipment belongs. For Pickup manifests, the next manifest type for attached shipments will typically be a MAWB. For MAWB manifests, the next manifest type will often be a DELIVERY. Typically, for Delivery manifests, the next manifest not be specified. See also `ManifestType` above.
+* `NextManifestID` - The supplier for the transmitted manifest will typically drop to or wait for the shipments to be recovered by the next suppliers, who will reference the shipment based on this textual next Manifest ID. See also above `ManifestID`.
+* `NextManifestTranID` - This is the unique numeric transaction identity for the next manifest in our system. See also above `ManifestTranID`.
+
 ##### Pieces
 
 One or more `Piece` elements with the following information.
 
 A `Piece` represents a piece record in our system. Typically, multiple, like pieces are grouped together in a single piece record, though that is not required. Therefore, a shipment might have multiple pieces but only one piece line. A shipment with two different types of pieces (TVs and stands) will usually have multiple piece lines.
 
-* `PieceID` - This is the unique numeric identity for the piece line in our shipment. It would allow you to specify updated dimension information for a particular piece. However, there is no correlation between this number and a physical piece (it doesn't appear on any label), so that system is not ready for use.
+* `PieceID` - This is the unique numeric identity for the piece line in our system. It would allow you to specify updated dimension information for a particular piece. However, there is no correlation between this number and a physical piece (it doesn't appear on any label), so that system is not ready for use.
 * `PieceCount` - If there are multiple pieces of the type represented by this piece line, that will be represented here by a quantity greater than 1. A quantity of 0 indicates that a piece has been converted into a pallet with other pieces (the pallet being represented by a different piece line). 
-* `PieceLength` - The length, in inches, of a a piece represented by this line.
-* `PieceWidth` - The width, in inches, of a a piece represented by this line.
-* `PieceHeight` - The height, in inches, of a a piece represented by this line.
+* `PieceLength` - The length, in inches, of a a piece represented by this line. This appearance of this element is configurable.
+* `PieceWidth` - The width, in inches, of a a piece represented by this line. This appearance of this element is configurable.
+* `PieceHeight` - The height, in inches, of a a piece represented by this line. This appearance of this element is configurable.
 * `PieceWeightActual` - The weight, in pounds, of a piece represented by this line. This is the *per piece* weight. A piece line with 5 TVs weighing 100 pounds each would have the value 100 in this element. 
 * `PieceDecVal` - The value, in US dollars, of a piece represented by this line. This is the *per piece* value. A piece line with 5 TVs valued at $1000 each would have the value 1000 in this element. This element is only present with special authorization.
 * `ProdType` - One of a list of official product type IDs. Technically, these vary by customer, though there is general consistency across customers. Examples include TV product types (such as "PDP-042", "LED-050", which stand for 42" Plasma TV and 50" LED LCD TV, respectively); mattress sizes (such as "Queen-M"); and generally classifications (such as "Case" and "Soft" for "Case goods" and "Soft goods", in the context of furniture). 
@@ -232,4 +276,4 @@ Miscellany
 
 * Vendor and Supplier are used interchangeably in this documentation. Generally, the terms refer to any company which we pay to provide us service. Typically, they are transportation providers (truck fleet operators) or assembly and installation service providers.
 * The term "element" is used to refer to an XML node.
-* The presence of elements which are "available upon request" or otherwise restricted are controlled by EDI configuration settings which should be coordinated with our technical staff. 
+* The presence of elements which are "available upon request" or otherwise restricted are controlled by EDI configuration settings which should be coordinated with our technical staff.
