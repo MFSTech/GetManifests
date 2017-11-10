@@ -81,22 +81,22 @@ The manifest information is hangs off the root inside of `Manifest` and is broke
 #### ManifestControlNumbers
 
 * `ManifestID` - This is the textual transaction identifier for the manifest in our system.
- * In the case of a MAWB, it is referred to as the "MAWB number". For Pickups, Deliveries, and Transfers, it is generally referred to as the "PRO Number". 
- * The intent of this field is to house the supplier's primary reference number for the manifest. This is not generally known at time of manifest creation, so a default value is constructed. The default is a letter ("P" for a Pickup, "M" for a MAWB, "D" for a Delivery, and "T" for a Transfer) followed by the numeric transaction identity (see `ManifestTranID`).
- * If the supplier provides this number, it replaces the default number in our system and in future transmissions. The supplier can provide the number in the response to this transmission-- in the `VendorManifestControlNumber` element-- and the system will perform the replacement automatically. Alternatively, the supplier could communicate the value for our Ops staff to manually update.
- * For some Carrier suppliers, we have secured ranges of valid numbers to use for this identifier on their MAWB manifests. We draw from this pool upon creation of the manifest, so even the earliest transmissions of that MAWB manifest will contain the valid, pre-assigned supplier reference number. 
- * In order for any transmission to us of [status](https://github.com/MFSTech/SendStatuses/) or [invoice](https://github.com/MFSTech/SendInvoices/) information to succeed, it must contain a `ManifestID` or `ManifestTranID` which matches a manifest transaction to which the transmitter is authorized.
+    * In the case of a MAWB, it is referred to as the "MAWB number". For Pickups, Deliveries, and Transfers, it is generally referred to as the "PRO Number". 
+    * The intent of this field is to house the supplier's primary reference number for the manifest. This is not generally known at time of manifest creation, so a default value is constructed. The default is a letter ("P" for a Pickup, "M" for a MAWB, "D" for a Delivery, and "T" for a Transfer) followed by the numeric transaction identity (see `ManifestTranID`).
+    * If the supplier provides this number, it replaces the default number in our system and in future transmissions. The supplier can provide the number in the response to this transmission-- in the `VendorManifestControlNumber` element-- and the system will perform the replacement automatically. Alternatively, the supplier could communicate the value for our Ops staff to manually update.
+    * For some Carrier suppliers, we have secured ranges of valid numbers to use for this identifier on their MAWB manifests. We draw from this pool upon creation of the manifest, so even the earliest transmissions of that MAWB manifest will contain the valid, pre-assigned supplier reference number. 
+    * In order for any transmission to us of [status](https://github.com/MFSTech/SendStatuses/) or [invoice](https://github.com/MFSTech/SendInvoices/) information to succeed, it must contain a `ManifestID` or `ManifestTranID` which matches a manifest transaction to which the transmitter is authorized.
 * `ManifestTranID` - This is the unique numeric transaction identity for the manifest in our system. It is inviolate for a particular transaction, unlike the textual `ManifestID`.  
 * `ManifestSecCode` - This is a code used for primitive security, primarily for document retrieval. For example, in order to access some printable representations of manifest information, the security code must be provided in the URL. They are typically a four-digit random number which does not usually change through the life of a manifest. The security system is designed for prevention of casual snooping of other suppliers' documents simply by trying other `ManifestTranID` values in the document retrieval URLs.
 
 #### ManifestKeyDates
 
 * `ManifestReadyDateTime`
- * For MAWB manifests with a `ManifestOriginType` of "Terminal", the Ready Date is the date and time we expect the shipment to be available for the carrier to begin transportation; internally, we refer to this as the ETD (estimated time of departure). We use that date together with the carrier's transit time matrix (if we have it in our system) to determine the Deliver Date, which we refer to internally as the ETA (estimated time of arrival).
- * For other manifests, the Ready Date has less official meaning. It is labeled as "Open Time" in our system and was originally intended to store the start of the allowable window for the agent supplier to perform the pickup or delivery. It defaults to the morning of the shipment's ready date for Pickup manifests and the morning of the shipment's delivery date (the date by which we are obligated to our customer to deliver the freight) for Delivery manifests. When the manifest is the "operative segment" (that is, a Pickup manifest with a "Pickup" `ManifestSpecialSide` or a Delivery manifest with a "Delivery" `ManifestSpecialSide`) and an associated shipment is scheduled, this date and time will be set to the start of the scheduled window.
+    * For MAWB manifests with a `ManifestOriginType` of "Terminal", the Ready Date is the date and time we expect the shipment to be available for the carrier to begin transportation; internally, we refer to this as the ETD (estimated time of departure). We use that date together with the carrier's transit time matrix (if we have it in our system) to determine the Deliver Date, which we refer to internally as the ETA (estimated time of arrival).
+    * For other manifests, the Ready Date has less official meaning. It is labeled as "Open Time" in our system and was originally intended to store the start of the allowable window for the agent supplier to perform the pickup or delivery. It defaults to the morning of the shipment's ready date for Pickup manifests and the morning of the shipment's delivery date (the date by which we are obligated to our customer to deliver the freight) for Delivery manifests. When the manifest is the "operative segment" (that is, a Pickup manifest with a "Pickup" `ManifestSpecialSide` or a Delivery manifest with a "Delivery" `ManifestSpecialSide`) and an associated shipment is scheduled, this date and time will be set to the start of the scheduled window.
 * `ManifestDeliverDateTime`
- * For MAWB manifests with a `ManifestDestinationType` of "Terminal", the Deliver Date is the date and time we expect the carrier to have made the shipment available for the next supplier; internally, we refer to this as the ETA (estimated time of arrival).
- * For other manifests, the Deliver Date has less official meaning. It is labeled as "Close Time" in our system and was originally intended to store the end of the allowable window for the agent supplier to perform the pickup or delivery. It defaults to the evening of the shipment's ready date for Pickup manifests and the evening of the shipment's delivery date (the date by which we are obligated to our customer to deliver the freight) for Delivery manifests. When the manifest is the "operative segment" (that is, a Pickup manifest with a "Pickup" `ManifestSpecialSide` or a Delivery manifest with a "Delivery" `ManifestSpecialSide`) and an associated shipment is scheduled, this date and time will be set to the end of the scheduled window.
+    * For MAWB manifests with a `ManifestDestinationType` of "Terminal", the Deliver Date is the date and time we expect the carrier to have made the shipment available for the next supplier; internally, we refer to this as the ETA (estimated time of arrival).
+    * For other manifests, the Deliver Date has less official meaning. It is labeled as "Close Time" in our system and was originally intended to store the end of the allowable window for the agent supplier to perform the pickup or delivery. It defaults to the evening of the shipment's ready date for Pickup manifests and the evening of the shipment's delivery date (the date by which we are obligated to our customer to deliver the freight) for Delivery manifests. When the manifest is the "operative segment" (that is, a Pickup manifest with a "Pickup" `ManifestSpecialSide` or a Delivery manifest with a "Delivery" `ManifestSpecialSide`) and an associated shipment is scheduled, this date and time will be set to the end of the scheduled window.
 * `ManifestScheduleDateTimeStart` - For a manifest with a specified `ManifestSpecialSide`, the represents the start of the allowable window for performance of the services identified by `ManifestShipType`. 
 * `ManifestScheduleDateTimeStop` - For a manifest with a specified `ManifestSpecialSide`, the represents the start of the allowable window for performance of the services identified by `ManifestShipType`.
 
@@ -107,13 +107,13 @@ Most of these elements are self-explanatory.
 * `ManifestOriginType` - This is either "Terminal" or "Address". "Terminal" is only used for MAWB manifests. When the carrier receives the manifest at their origin terminal rather than retrieving it from an address, the "Terminal" origin type is used. Similarly, when the carrier holds the manifest for pickup at their destination terminal, rather than delivering it to an address, the "Terminal" destination type is used.
 * `ManifestOriginCode` - When the `ManifestOriginType` or `ManifestDestType` is "Terminal", this will contain the terminal's code (often an airport code such as "MSP"). When the `ManifestType` is "Pickup" this will be the terminal code for the origin of the adjoining MAWB. When the `ManifestType` is "Delivery", this will be the terminal code for the destination of the adjoining MAWB.
 * `ManifestOriginLocationType` - This is one of an enumerated list of location types.
- * Business
- * Convention
- * Hospital
- * Hotel
- * MilitaryBase
- * Residential
- * School
+    * Business
+    * Convention
+    * Hospital
+    * Hotel
+    * MilitaryBase
+    * Residential
+    * School
 * `ManifestOriginName` - This is the primary name. It could be a business name or an individual's name. It generally should not be blank. The system will automatically move the contact name to the primary name if the primary name is left blank and the contact name is non-blank. Occasionally, customers will enter the same name in the primary and contact name fields. 
 * `ManifestOriginContact`
 * `ManifestOriginAdd1`
@@ -152,8 +152,8 @@ Most of these elements are self-explanatory. See the analogous origin element ab
 #### ManifestPieceSummary
 
 * `ManifestPieceCount` - This represents the total number of pieces on the manifest as a whole (across all of our customers' shipments).
- * While seemingly obvious, it isn't always clear what constitutes a piece. Generally, we view it as a separable, labeled box. Several boxes piled on (but not secured to) a pallet are generally considered separate pieces. However, if they are banded to a pallet and surrounded with black shrink wrap, then the pallet itself is considered a single piece. It's less clear for configurations in between.
- * Usually, this will be the sum of the number of pieces listed in each of our customers' shipments. However, sometimes the freight is reconfigured (e.g. banded to pallets) and shipped as larger, bulk units instead of the individual pieces supplied by the customer. In those cases, the adjusted piece count (known internally as "override pieces") will be displayed here. 
+    * While seemingly obvious, it isn't always clear what constitutes a piece. Generally, we view it as a separable, labeled box. Several boxes piled on (but not secured to) a pallet are generally considered separate pieces. However, if they are banded to a pallet and surrounded with black shrink wrap, then the pallet itself is considered a single piece. It's less clear for configurations in between.
+    * Usually, this will be the sum of the number of pieces listed in each of our customers' shipments. However, sometimes the freight is reconfigured (e.g. banded to pallets) and shipped as larger, bulk units instead of the individual pieces supplied by the customer. In those cases, the adjusted piece count (known internally as "override pieces") will be displayed here. 
 * `ManifestWeightActual` - This represents the total actual weight of all pieces on the manifest. It is not the "dimensional weight".
 * `ManifestWeightDimensional` - This represents the total "dimensional weight" of all pieces on the manifest. The appearance of this element is configurable and corresponds with the appearance of `PieceLength`, `PieceWidth`, and `PieceHeight` referenced below. The dimensional weight is calculated by totaling the product of the length, width, and height of each piece, divided by the dim factor. The dim factor is supplier-specific, but it is usually 250 for ground shipments.
 * `ManifestWeightChargeable` - This "chargeable weight" represents the greater of the dimensional weight or actual weight of the manifest and it used to calculate those costs of a manifest which are based on weight. However, most Agent suppliers use a pricing scheme based on actual weight and ignore the dimensional and chargeable weights.
@@ -230,14 +230,14 @@ A `Piece` represents a piece record in our system. Typically, multiple, like pie
 * `ProdID` - This is a customer-specified product ID which is often a model or SKU number.
 * `ProdName` - This is a customer-specified product name.
 * `PieceCommodity` - This is one of an specific list of commodity types. This element is available upon request.
- * Appliances
- * Exercise Equipment
- * Furniture
- * Mattress/Foundation
- * Misc Freight
- * Other
- * TV
- * TV Accessories
+    * Appliances
+    * Exercise Equipment
+    * Furniture
+    * Mattress/Foundation
+    * Misc Freight
+    * Other
+    * TV
+    * TV Accessories
 * `PieceSubCommodity` - This is one of a specific list of commodity types, with a different list for each commodity type. Examples include "Range" and "Grill" for "Appliances"; "LCD" and "Plasma" for "TV"; "Bookcase" and "Buffet" for "Furniture"; and "Mattress" and "Boxspring" for "Mattress/Foundation". This element is available upon request.
 * `PieceNMFC` - The National Motor Freight Classification for the pieces represented by this line, if known. This is mostly for future expansion as it is rarely populated. This element is available upon request. 
 
