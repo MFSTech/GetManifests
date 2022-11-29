@@ -8,7 +8,7 @@ Overview
 
 Manna Freight Systems, Inc. can be configured to generate specially-formatted XML documents which contain shipment information for our suppliers. This information can be transferred to an HTTP endpoint or put into a file which can be transferred via FTP-- either uploaded to an FTP server hosted by the supplier or made available for download on an FTP server hosted by us.
 
-We recommend beginning the integration by creating a system to receive our transmissions and then requesting that we enable them. You would start to collect real-world examples for your development and testing. Make your request by emailing EDI@MFSCorporate.com.
+We recommend beginning the integration by creating a system to receive our transmissions and then requesting that we enable them. You would start to collect real-world examples for your development and testing. Make your request by emailing PFD.EDI@PilotDelivers.com.
 
 Transmission
 ------------
